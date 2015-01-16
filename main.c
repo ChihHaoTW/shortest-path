@@ -24,14 +24,46 @@ int len;
 gene_data* genes;
 
 int* points;
-const int child_count = 200;
-const int max_time = 5; //s
+int child_count = 200;
+int max_time = 5; //s
 const float reserve_rate = 0.3;
 const float death_rate = 0.3;
-float mut_rate = 0.39;
+float mut_rate = 0.4;
 
 int main()
 {
+  int temp;
+  float temp_f;
+  printf("Input the gene amount (enter 0 to set default 200) : ");
+  scanf("%d", &temp);
+  if(temp > 0)
+    child_count = temp;
+  else if(temp < 0)
+  {
+    printf("\nwrong number!!\n");
+    return 0;
+  }
+
+  printf("\nInput the max time (s) (enter 0 to set default 5) : ");
+  scanf("%d", &temp);
+  if(temp > 0)
+    max_time = temp;
+  else if(temp < 0)
+  {
+    printf("\nwrong number!!\n");
+    return 0;
+  }
+
+  printf("\nInput the mutation rate (0.0, 1.0] (enter 0 to set default 0.4) : ");
+  scanf("%f", &temp_f);
+  if(temp_f <= 1 && temp_f > 0)
+    mut_rate = temp_f;
+  else if(temp_f < 0)
+  {
+    printf("\nwrong number!!\n");
+    return 0;
+  }
+
   fh = fopen(input_file, "r");
 
   char length[10];
@@ -110,6 +142,7 @@ int main()
     g++;
   }
   
+  printf("\nAfter %d generations\n", g);
 
   // for(j = 0; j < len; j++)
   //   printf("%d ", genes[j].score);
