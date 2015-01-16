@@ -9,11 +9,17 @@ int* gen_gene(int);
 void shuffle(int*, int);
 int cal_score(int*);
 
+struct G{
+  int score;
+  int* gene;
+};
+typedef struct G gene_data;
+
 char* input_file = "res/TSP100.txt"; 
 FILE* fh;
 int** Array;
 int len;
-int* genes[2];
+gene_data* genes;
 
 const int child_count = 200;
 const int max_time = 3000; //ms
@@ -31,8 +37,7 @@ int main()
   char line[99999];
   fgets(line, sizeof(line), fh);
 
-  genes[0] = (int*)malloc(len * sizeof(int)); // score
-  genes[1] = (int*)malloc(len * sizeof(int)); // gene
+  genes = (gene_data*)malloc(child_count * sizeof(gene_data));
 
   int *pData;
   Array = (int **)malloc(len * sizeof(int *) + len * len * sizeof(int));
@@ -51,6 +56,10 @@ int main()
   
   for(i = 0; i < child_count; i++)
   {
+    genes[i].gene = gen_gene(len); 
+    for(j = 0; j < len; j++)
+      printf("%d ", genes[i].gene[j]);
+    printf("\n");
   }
 
   fclose(fh);
@@ -67,6 +76,7 @@ int* gen_gene(int size)
   //for(i = 0; i < size; i++)
   //  gene[i] = rand() % (size-i);
 
+  shuffle(gene, len);
   return gene;
 }
 
