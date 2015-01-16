@@ -28,6 +28,7 @@ const int child_count = 200;
 const int max_time = 5; //s
 const float reserve_rate = 0.3;
 const float death_rate = 0.3;
+float mut_rate = 0.39;
 
 int main()
 {
@@ -72,7 +73,8 @@ int main()
 
   int g = 1;
   int reserve_limit, death_limit;
-  gene_data* next_genes;
+  int* father, mother;
+  gene_data* next_gen;
   reserve_limit = child_count * reserve_rate;
   death_limit   = child_count * death_rate;
   while(1)
@@ -81,22 +83,33 @@ int main()
       genes[i].score = cal_score(genes[i].gene); 
 
     qsort((void*)genes, child_count, sizeof(gene_data), compare);
+    printf("%d\n", genes[0].score);
 
     if(time(NULL) - start_time >= max_time)
       break;
 
     // next gen
-    // next_genes = (gene_data*)malloc(child_count * sizeof(gene_data));
-    // for(i = 0; i < child_count; i++)
-    // {
-    //   if(i >= death_limit)
-    //     next_gen[i].gene = gen_gene(len);
-    //   else if(i <= reserve_limit)
-    //     next_gen[i].gene = genes[i].gene // TODO prevent repeat count score
-    //     
-    // }
+    next_gen = (gene_data*)malloc(child_count * sizeof(gene_data));
+    for(i = 0; i < child_count; i++)
+    {
+      if(i >= death_limit)
+        next_gen[i].gene = gen_gene(len);
+      else if(i <= reserve_limit)
+        next_gen[i].gene = genes[i].gene; // TODO prevent repeat count score
+      else
+      {
+        father = genes[rand() % reserve_limit].gene;
+        mother = genes[rand() % child_count  ].gene;
+        next_gen[i].gene = crossover(father, mother, mut_rate);
+      }
+    }
+  
+    free(genes);
+    genes = next_gen;
 
+    g++;
   }
+  
 
   // for(j = 0; j < len; j++)
   //   printf("%d ", genes[j].score);
@@ -109,9 +122,21 @@ int* crossover(int* a, int* b, float mut_rate)
 {
   int* c;
   int i;
+  float rnd;
   c = (int*)malloc(len * sizeof(int));
 
+  for(i = len - 1; i >= 0; i--)
+  {
+    rnd = (rand() % 100) / 100;
+    if(rnd < mut_rate)
+      c[i] = rand() % (len - i);
+    else if(rnd > 0.5 + mut_rate/2)
+      c[i] = a[i];
+    else
+      c[i] = b[i];
+  }
 
+  return c;
 }
 
 int compare(const void* arg1, const void* arg2)
