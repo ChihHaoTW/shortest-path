@@ -23,6 +23,7 @@ int** Array;
 int len;
 gene_data* genes;
 
+int* points;
 const int child_count = 200;
 const int max_time = 5; //s
 const float reserve_rate = 0.3;
@@ -40,6 +41,10 @@ int main()
 
   char line[99999];
   fgets(line, sizeof(line), fh);
+
+  points = (int*)malloc(len * sizeof(int));
+  for(i = 0; i < len; i++)
+    points[i] = i;
 
   genes = (gene_data*)malloc(child_count * sizeof(gene_data));
 
@@ -81,21 +86,21 @@ int main()
       break;
 
     // next gen
-    next_genes = (gene_data*)malloc(child_count * sizeof(gene_data));
-    for(i = 0; i < child_count; i++)
-    {
-      if(i >= death_limit)
-        next_gen[i].gene = gen_gene(len);
-      else if(i <= reserve_limit)
-        next_gen[i].gene = genes[i].gene // TODO prevent repeat count score
-        
-    }
+    // next_genes = (gene_data*)malloc(child_count * sizeof(gene_data));
+    // for(i = 0; i < child_count; i++)
+    // {
+    //   if(i >= death_limit)
+    //     next_gen[i].gene = gen_gene(len);
+    //   else if(i <= reserve_limit)
+    //     next_gen[i].gene = genes[i].gene // TODO prevent repeat count score
+    //     
+    // }
 
   }
 
-  for(j = 0; j < len; j++)
-    printf("%d ", genes[j].score);
-  printf("\n");
+  // for(j = 0; j < len; j++)
+  //   printf("%d ", genes[j].score);
+  // printf("\n");
 
   fclose(fh);
 }
@@ -119,25 +124,38 @@ int* gen_gene(int size)
   int* gene = (int*)malloc(size * sizeof(int));
   int i;
 
-  for(i = 0; i < size; i++)
-    gene[i] = i;
-
   //for(i = 0; i < size; i++)
-  //  gene[i] = rand() % (size-i);
+  //  gene[i] = i;
 
-  shuffle(gene, len);
+  for(i = 0; i < size; i++)
+    gene[i] = rand() % (size-i);
+
   return gene;
 }
 
 int cal_score(int* gene)
 {
-  int i;
-  int score = 0;
+  int i, score = 0, cur_point, last_point;
+  int* points_copy;
 
-  for(i = 0; i < len - 1; i++)
-    score += Array[gene[i]][gene[i+1]];
-  score += Array[gene[len - 1]][gene[0]];
+  points_copy = (int*)malloc(len * sizeof(int));
+  memcpy(points_copy, points, len * sizeof(int));
 
+  last_point = gene[0];
+  points_copy[last_point] = -1;
+  for(i = 1; i < len; i++)
+  {
+    cur_point = gene[i];
+
+    while(points_copy[cur_point] == -1)
+      cur_point++;
+
+    score += Array[last_point][cur_point];
+    last_point = cur_point;
+  }
+  score += Array[cur_point][gene[0]];
+
+  free(points_copy);
   return score;
 }
 
