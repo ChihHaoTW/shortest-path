@@ -8,6 +8,7 @@ void print_array(int**, int);
 int* gen_gene(int);
 void shuffle(int*, int);
 int cal_score(int*);
+int compare(const void*, const void*);
 
 struct G{
   int score;
@@ -50,19 +51,30 @@ int main()
 
   srand(time(NULL));
 
-  ////////////////////
-  // start gene loop
-  ////////////////////
-  
+  ////////////////////////////
+  // gen first 
+  ////////////////////////////
   for(i = 0; i < child_count; i++)
-  {
     genes[i].gene = gen_gene(len); 
-    for(j = 0; j < len; j++)
-      printf("%d ", genes[i].gene[j]);
-    printf("\n");
-  }
+
+  ////////////////////////////
+  // ga loop
+  ////////////////////////////
+  for(i = 0; i < child_count; i++)
+    genes[i].score = cal_score(genes[i].gene); 
+
+  qsort((void*)genes, child_count, sizeof(gene_data), compare);
+
+  for(j = 0; j < len; j++)
+    printf("%d ", genes[j].score);
+  printf("\n");
 
   fclose(fh);
+}
+
+int compare(const void* arg1, const void* arg2)
+{
+  return ((*(gene_data*)arg1).score - (*(gene_data*)arg2).score);
 }
 
 int* gen_gene(int size)
