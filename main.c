@@ -9,6 +9,7 @@ int* gen_gene(int);
 void shuffle(int*, int);
 int cal_score(int*);
 int compare(const void*, const void*);
+int* crossover(int*, int*, float);
 
 struct G{
   int score;
@@ -23,7 +24,9 @@ int len;
 gene_data* genes;
 
 const int child_count = 200;
-const int max_time = 3000; //ms
+const int max_time = 5; //s
+const float reserve_rate = 0.3;
+const float death_rate = 0.3;
 
 int main()
 {
@@ -62,18 +65,31 @@ int main()
   // ga loop
   ////////////////////////////
 
-  int check = 1, g = 1;
-  while(check)
+  int g = 1;
+  int reserve_limit, death_limit;
+  gene_data* next_genes;
+  reserve_limit = child_count * reserve_rate;
+  death_limit   = child_count * death_rate;
+  while(1)
   {
     for(i = 0; i < child_count; i++)
       genes[i].score = cal_score(genes[i].gene); 
 
     qsort((void*)genes, child_count, sizeof(gene_data), compare);
 
-    for(j = 0; j < 999999999; j++)
-      j =j;
+    if(time(NULL) - start_time >= max_time)
+      break;
 
-    break;
+    // next gen
+    next_genes = (gene_data*)malloc(child_count * sizeof(gene_data));
+    for(i = 0; i < child_count; i++)
+    {
+      if(i >= death_limit)
+        next_gen[i].gene = gen_gene(len);
+      else if(i <= reserve_limit)
+        next_gen[i].gene = genes[i].gene // TODO prevent repeat count score
+        
+    }
 
   }
 
@@ -81,9 +97,16 @@ int main()
     printf("%d ", genes[j].score);
   printf("\n");
 
-  printf("%d\n", start_time - time(NULL));
-
   fclose(fh);
+}
+
+int* crossover(int* a, int* b, float mut_rate)
+{
+  int* c;
+  int i;
+  c = (int*)malloc(len * sizeof(int));
+
+
 }
 
 int compare(const void* arg1, const void* arg2)
