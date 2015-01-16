@@ -19,8 +19,8 @@ typedef struct G gene_data;
 
 char* input_file = "res/TSP100.txt"; 
 FILE* fh;
-int** Array;
-int len;
+int** Array; // map
+int len; // gene length
 gene_data* genes;
 
 int* points;
@@ -32,6 +32,9 @@ float mut_rate = 0.4;
 
 int main()
 {
+  ////////////////////////////
+  // input interface 
+  ////////////////////////////
   int temp;
   float temp_f;
   printf("Input the gene amount (enter 0 to set default 200) : ");
@@ -64,6 +67,9 @@ int main()
     return 0;
   }
 
+  ////////////////////////////
+  // init 
+  ////////////////////////////
   fh = fopen(input_file, "r");
 
   char length[10];
@@ -94,7 +100,7 @@ int main()
   int start_time = time(NULL);
 
   ////////////////////////////
-  // gen first 
+  // gen first generation
   ////////////////////////////
   for(i = 0; i < child_count; i++)
     genes[i].gene = gen_gene(len); 
@@ -102,8 +108,7 @@ int main()
   ////////////////////////////
   // ga loop
   ////////////////////////////
-
-  int g = 1;
+  int g = 1; // counter
   int reserve_limit, death_limit;
   int* father, mother;
   gene_data* next_gen;
@@ -111,12 +116,15 @@ int main()
   death_limit   = child_count * death_rate;
   while(1)
   {
+    // calculate gene score (distance)
     for(i = 0; i < child_count; i++)
       genes[i].score = cal_score(genes[i].gene); 
 
+    // sort gene by score from small to big
     qsort((void*)genes, child_count, sizeof(gene_data), compare);
     printf("%d\n", genes[0].score);
 
+    // set break point
     if(time(NULL) - start_time >= max_time)
       break;
 
@@ -151,6 +159,8 @@ int main()
   fclose(fh);
 }
 
+////////////////////////////////
+// gene crossover & mutation
 int* crossover(int* a, int* b, float mut_rate)
 {
   int* c;
@@ -164,9 +174,9 @@ int* crossover(int* a, int* b, float mut_rate)
     if(rnd < mut_rate)
       c[i] = rand() % (len - i);
     else if(rnd > 0.5 + mut_rate/2)
-      c[i] = a[i];
+      c[i] = a[i]; // choose farther
     else
-      c[i] = b[i];
+      c[i] = b[i]; // choose mother
   }
 
   return c;
@@ -177,6 +187,13 @@ int compare(const void* arg1, const void* arg2)
   return ((*(gene_data*)arg1).score - (*(gene_data*)arg2).score);
 }
 
+////////////////////////////////
+// random generate gene 
+// 基因的編碼意義為：
+// * 第一碼 = 第一步要經過路徑點清單中的第幾個點
+// * 第二碼 = 拔掉第一步經過的點之後，要經過路徑點清單中的第幾個點
+// * 第三碼 = 拔掉第二步經過的點之後，要經過路徑點清單中的第幾個點
+// * 以下類推
 int* gen_gene(int size)
 {
   int* gene = (int*)malloc(size * sizeof(int));
@@ -191,6 +208,8 @@ int* gen_gene(int size)
   return gene;
 }
 
+////////////////////////////////
+// calculate score (distance)
 int cal_score(int* gene)
 {
   int i, score = 0, cur_point, last_point;
@@ -217,6 +236,7 @@ int cal_score(int* gene)
   return score;
 }
 
+// none using
 void shuffle(int* ary, int size)
 {
   int len = 5;
@@ -243,6 +263,8 @@ void print_array(int **ary, int len)
 
 }
 
+////////////////////////////////
+// split char array to int array by "\t"
 void split2int(int *arr, char *str, const char *del) 
 {
   char *s = strtok(str, del);
