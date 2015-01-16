@@ -50,6 +50,7 @@ int main()
     split2int(Array[i++], line, "\t");
 
   srand(time(NULL));
+  int start_time = time(NULL);
 
   ////////////////////////////
   // gen first 
@@ -60,14 +61,27 @@ int main()
   ////////////////////////////
   // ga loop
   ////////////////////////////
-  for(i = 0; i < child_count; i++)
-    genes[i].score = cal_score(genes[i].gene); 
 
-  qsort((void*)genes, child_count, sizeof(gene_data), compare);
+  int check = 1, g = 1;
+  while(check)
+  {
+    for(i = 0; i < child_count; i++)
+      genes[i].score = cal_score(genes[i].gene); 
+
+    qsort((void*)genes, child_count, sizeof(gene_data), compare);
+
+    for(j = 0; j < 999999999; j++)
+      j =j;
+
+    break;
+
+  }
 
   for(j = 0; j < len; j++)
     printf("%d ", genes[j].score);
   printf("\n");
+
+  printf("%d\n", start_time - time(NULL));
 
   fclose(fh);
 }
