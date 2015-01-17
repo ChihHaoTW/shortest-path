@@ -17,7 +17,7 @@ struct G{
 };
 typedef struct G gene_data;
 
-// char* input_file = "res/TSP100.txt"; 
+// char* input_file = "res/TSP10.txt"; 
 char input_file[999];
 FILE* fh;
 int** Array; // map
@@ -39,8 +39,8 @@ int main()
   int temp;
   float temp_f;
   char* temp_s;
-  printf("Input the test file : ");
-  scanf("%s", input_file);
+   //printf("Input the test file : ");
+   //scanf("%s", input_file);
 
   printf("Input the gene amount (enter 0 to set default 200) : ");
   scanf("%d", &temp);
@@ -77,14 +77,13 @@ int main()
   ////////////////////////////
   fh = fopen(input_file, "r");
 
-  char length[10];
+  char length[99999];
   int i, j;
 
-  fgets(length, 10, fh);
+  fgets(length, sizeof(length), fh);
   len = atoi(length);
 
   char line[99999];
-  fgets(line, sizeof(line), fh);
 
   points = (int*)malloc(len * sizeof(int));
   for(i = 0; i < len; i++)
