@@ -41,6 +41,7 @@ int main()
   char* temp_s;
   printf("Input the test file : ");
   scanf("%s", input_file);
+
   printf("Input the gene amount (enter 0 to set default 200) : ");
   scanf("%d", &temp);
   if(temp > 0)
@@ -154,7 +155,48 @@ int main()
     g++;
   }
   
+
+  ////////////////////////////
+  // output
+  ////////////////////////////
   printf("\nAfter %d generations\n", g);
+  printf("Distance : %d\n", genes[0].score);
+  printf("Path : ");
+  int cur_point, last_point;
+  int* points_copy;
+
+  points_copy = (int*)malloc(len * sizeof(int));
+  memcpy(points_copy, points, len * sizeof(int));
+
+  last_point = genes[0].gene[0];
+  points_copy[last_point] = -1;
+  printf("%d ", last_point);
+  int relate_position;
+  for(i = 1; i < len; i++)
+  {
+    cur_point = 0;
+    relate_position = genes[0].gene[i];
+
+    while(1)
+    {
+      if(points_copy[cur_point] != -1)
+        relate_position--;
+
+      if(relate_position < 0)
+        break;
+
+      cur_point++;
+    }
+
+    printf(",%d ", cur_point);
+
+    Array[last_point][cur_point];
+    points_copy[cur_point] = -1;
+    last_point = cur_point;
+  }
+  printf("\n");
+
+  free(points_copy);
 
   // for(j = 0; j < len; j++)
   //   printf("%d ", genes[j].score);
@@ -224,16 +266,28 @@ int cal_score(int* gene)
 
   last_point = gene[0];
   points_copy[last_point] = -1;
+  int relate_position;
   for(i = 1; i < len; i++)
   {
-    cur_point = gene[i];
+    cur_point = 0;
+    relate_position = gene[i];
 
-    while(points_copy[cur_point] == -1)
+    while(1)
+    {
+      if(points_copy[cur_point] != -1)
+        relate_position--;
+
+      if(relate_position < 0)
+        break;
+
       cur_point++;
+    }
 
     score += Array[last_point][cur_point];
+    points_copy[cur_point] = -1;
     last_point = cur_point;
   }
+
   score += Array[cur_point][gene[0]];
 
   free(points_copy);
