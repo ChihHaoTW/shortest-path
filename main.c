@@ -39,8 +39,8 @@ int main()
   int temp;
   float temp_f;
   char* temp_s;
-   //printf("Input the test file : ");
-   //scanf("%s", input_file);
+  printf("Input the test file : ");
+  scanf("%s", input_file);
 
   printf("Input the gene amount (enter 0 to set default 200) : ");
   scanf("%d", &temp);
