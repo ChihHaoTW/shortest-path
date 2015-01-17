@@ -17,7 +17,8 @@ struct G{
 };
 typedef struct G gene_data;
 
-char* input_file = "res/TSP100.txt"; 
+// char* input_file = "res/TSP100.txt"; 
+char input_file[999];
 FILE* fh;
 int** Array; // map
 int len; // gene length
@@ -37,6 +38,9 @@ int main()
   ////////////////////////////
   int temp;
   float temp_f;
+  char* temp_s;
+  printf("Input the test file : ");
+  scanf("%s", input_file);
   printf("Input the gene amount (enter 0 to set default 200) : ");
   scanf("%d", &temp);
   if(temp > 0)
