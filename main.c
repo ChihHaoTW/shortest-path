@@ -117,7 +117,7 @@ int main()
   int* father, mother;
   gene_data* next_gen;
   reserve_limit = child_count * reserve_rate;
-  death_limit   = child_count * death_rate;
+  death_limit   = child_count * (1 - death_rate);
   while(1)
   {
     // calculate gene score (distance)
