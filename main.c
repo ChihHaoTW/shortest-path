@@ -202,6 +202,8 @@ int main()
   // printf("\n");
 
   fclose(fh);
+
+  system("PAUSE");
 }
 
 ////////////////////////////////
